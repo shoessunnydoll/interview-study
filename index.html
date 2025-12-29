@@ -8,8 +8,14 @@
         body { font-family: 'Microsoft JhengHei', sans-serif; text-align: center; background: #f0f2f5; padding: 20px; color: #333; }
         .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .hidden { display: none; }
+        
+        /* 圖片容器樣式 */
+        .image-box { margin: 20px 0; border: 1px solid #ddd; border-radius: 10px; overflow: hidden; background: #fff; }
+        .image-box img { width: 100%; height: auto; display: block; }
+
         .video-box { margin-top: 25px; border: 5px solid #222; border-radius: 12px; background: #000; overflow: hidden; line-height: 0; }
         video { width: 100%; height: auto; display: block; }
+        
         button { padding: 15px 35px; font-size: 18px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 50px; transition: 0.3s; font-weight: bold; margin-top: 20px; }
         button:hover { background: #218838; transform: scale(1.05); }
         .alert-box { background: #fff3cd; color: #856404; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #ffeeba; font-weight: bold; }
@@ -19,8 +25,17 @@
 
     <div class="container" id="start-page">
         <h1>面試媒介導致感受差異研究</h1>
-        <p>感謝參與！點擊下方按鈕後，將隨機分配面試情境。</p>
+        <p>感謝參與！點擊下方按鈕後，將隨機分配面試情境並查看面試通知。</p>
         <button onclick="assignInterview()">開始隨機分配</button>
+    </div>
+
+    <div class="container hidden" id="notice-page">
+        <div class="alert-box" id="notice-alert"></div>
+        <h2>【 第一階段：閱讀面試通知 】</h2>
+        <p>請仔細閱讀以下通知內容，隨後將進入面試情境。</p>
+        <div class="image-box" id="image-container">
+            </div>
+        <button style="background: #ffc107; color: #000;" onclick="showVideo()">我已閱讀完畢，進入面試</button>
     </div>
 
     <div class="container hidden" id="interview-page">
@@ -31,29 +46,43 @@
     </div>
 
     <script>
-        let selectedType = "";
+        let selectedScenario = null;
 
-        function assignInterview() {
-            // 注意：這裡我使用了 encodeURIComponent 來處理中文檔名問題
-const scenarios = [
-            // 注意：這裡的路徑已經拿掉 Videos/，因為檔案在根目錄
-            { type: "實體面試", title: "【情境 A：實體面試模式】", url: "1video.mp4" },
-            { type: "線上面試", title: "【情境 B：線上面試模式】", url: "2video.mp4" },
-            { type: "AI面試",   title: "【情境 C：AI面試模式】",  url: "3video.mp4" }
+        // 設定您的檔案名稱，請確保圖片與 html 檔案放在同一個資料夾
+        const scenarios = [
+            { type: "實體面試", title: "【情境 A：實體面試模式】", url: "1video.mp4", img: "1notice.jpg" },
+            { type: "線上面試", title: "【情境 B：線上面試模式】", url: "2video.mp4", img: "2notice.jpg" },
+            { type: "AI面試",   title: "【情境 C：AI面試模式】",  url: "3video.mp4", img: "3notice.jpg" }
         ];
 
-            const random = scenarios[Math.floor(Math.random() * scenarios.length)];
-            selectedType = random.type;
+        function assignInterview() {
+            // 隨機抽選
+            selectedScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
 
+            // 準備圖片內容
+            const imgContainer = document.getElementById('image-container');
+            imgContainer.innerHTML = `<img src="${selectedScenario.img}" alt="面試通知書">`;
+
+            // 切換頁面
             document.getElementById('start-page').classList.add('hidden');
+            document.getElementById('notice-page').classList.remove('hidden');
+            document.getElementById('notice-alert').innerText = `⚠️ 您抽到的是「${selectedScenario.type}」情境`;
+        }
+
+        function showVideo() {
+            // 切換頁面
+            document.getElementById('notice-page').classList.add('hidden');
             document.getElementById('interview-page').classList.remove('hidden');
-            document.getElementById('interview-title').innerText = random.title;
-            document.getElementById('reminder-text').innerText = `⚠️ 提醒：您抽到的是「${selectedType}」，進入問卷後請選擇此項。`;
             
-            const container = document.getElementById('video-container');
-            container.innerHTML = `
+            // 設置標題與提醒
+            document.getElementById('interview-title').innerText = selectedScenario.title;
+            document.getElementById('reminder-text').innerText = `⚠️ 提醒：您剛才閱讀的是「${selectedScenario.type}」通知，請專注觀看以下影片。`;
+            
+            // 插入影片
+            const videoContainer = document.getElementById('video-container');
+            videoContainer.innerHTML = `
                 <video id="interviewVideo" controls autoplay playsinline>
-                    <source src="${random.url}" type="video/mp4">
+                    <source src="${selectedScenario.url}" type="video/mp4">
                     您的瀏覽器不支援播放，請更換瀏覽器。
                 </video>
             `;
@@ -65,4 +94,3 @@ const scenarios = [
     </script>
 </body>
 </html>
-
