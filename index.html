@@ -35,11 +35,12 @@
 
         function assignInterview() {
             // 注意：這裡我使用了 encodeURIComponent 來處理中文檔名問題
-            const scenarios = [
-                { type: "實體面試", title: "【情境 A：實體面試】", url: "Videos/" + encodeURIComponent("實體面試.mp4") },
-                { type: "線上面試", title: "【情境 B：線上面試】", url: "Videos/" + encodeURIComponent("線上面試.mp4") },
-                { type: "AI面試",   title: "【情境 C：AI面試】",  url: "Videos/" + encodeURIComponent("ai.mp4.mp4") }
-            ];
+const scenarios = [
+            // 注意：這裡的路徑已經拿掉 Videos/，因為檔案在根目錄
+            { type: "實體面試", title: "【情境 A：實體面試模式】", url: "1video.mp4" },
+            { type: "線上面試", title: "【情境 B：線上面試模式】", url: "2video.mp4" },
+            { type: "AI面試",   title: "【情境 C：AI面試模式】",  url: "3video.mp4" }
+        ];
 
             const random = scenarios[Math.floor(Math.random() * scenarios.length)];
             selectedType = random.type;
@@ -64,3 +65,4 @@
     </script>
 </body>
 </html>
+
