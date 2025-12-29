@@ -2,36 +2,49 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>面試情境研究網站</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>面試媒介導致感受差異研究</title>
     <style>
-        body { font-family: 'Microsoft JhengHei', sans-serif; text-align: center; background: #f0f2f5; padding: 40px; color: #333; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        body { font-family: 'Microsoft JhengHei', sans-serif; text-align: center; background: #f0f2f5; padding: 20px; color: #333; line-height: 1.6; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .hidden { display: none; }
-        .video-box { margin-top: 25px; border: 8px solid #222; border-radius: 15px; background: #000; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
-        .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        button { padding: 15px 35px; font-size: 20px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 50px; transition: 0.3s; font-weight: bold; }
+        .video-box { 
+            margin-top: 25px; 
+            border: 5px solid #222; 
+            border-radius: 12px; 
+            background: #000; 
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        video { width: 100%; max-height: 70vh; display: block; }
+        button { padding: 15px 35px; font-size: 18px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 50px; transition: 0.3s; font-weight: bold; margin-top: 20px; }
         button:hover { background: #218838; transform: scale(1.05); }
         .alert-box { background: #fff3cd; color: #856404; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #ffeeba; font-weight: bold; }
+        h1 { color: #0056b3; margin-bottom: 10px; }
+        .footer-note { color: #888; font-size: 0.85em; margin-top: 20px; }
     </style>
 </head>
 <body>
 
     <div class="container" id="start-page">
-        <h1>面試媒介導致感受差異研究</h1>
-        <p>感謝你參與此專題研究實驗！點擊下方按鈕後，將隨機為您分配一種面試情境～</p>
-        <button onclick="assignInterview()">進入隨機分配</button>
+        <h1>面試媒介感受差異研究</h1>
+        <p>歡迎參加本專案研究。點擊下方按鈕後，您將被隨機分配到一種面試情境（實體、線上或 AI 面試）。</p>
+        <p>請務必開起聲音並完整觀看完面試官的引導影片。</p>
+        <button onclick="assignInterview()">開始隨機分配</button>
     </div>
 
     <div class="container hidden" id="interview-page">
         <div class="alert-box" id="reminder-text"></div>
-        <h2 id="interview-title">正在加載...</h2>
+        <h2 id="interview-title">正在加載面試畫面...</h2>
         
-        <div class="video-box">
-            <iframe id="interview-video" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
+        <div class="video-box" id="video-container">
+            </div>
 
-        <div style="margin-top: 30px;">
-            <p>※ 請務必完整觀看完影片後再點擊下方按鈕</p>
+        <div>
+            <p class="footer-note">※ 觀看結束後，請點擊下方按鈕前往評分問卷。</p>
             <button style="background: #007bff;" onclick="goToSurvey()">我已觀看完畢，前往填寫問卷</button>
         </div>
     </div>
@@ -39,27 +52,38 @@
     <script>
         let selectedType = "";
 
-        function assignInterview() {
-            const scenarios = [
-                { type: "實體", title: "【實體面試情境】", videoId: "https://www.youtube.com/watch?v=-tO9d1Nwd0M&list=RD-tO9d1Nwd0M&start_radio=1" },
-                { type: "線上", title: "【線上面試情境】", videoId: "https://www.youtube.com/watch?v=tCt-Fd4rg78" },
-                { type: "AI",   title: "【AI面試情境】",  videoId: "https://www.youtube.com/watch?v=BpXYBsz3ou8" }
-            ];
+        // 設定場景：請確保您的影片檔案放置在 videos 資料夾中，且檔名正確（區分大小寫）
+        const scenarios = [
+            { type: "實體面試", title: "【情境A：實體面試模式】", url: "videos/實體面試.mp4" },
+            { type: "線上面試", title: "【情境B：線上面試模式】", url: "videos/線上面試.mp4" },
+            { type: "AI面試",   title: "【情境C：AI面試模式】",  url: "videos/AI面試.mp4" }
+        ];
 
+        function assignInterview() {
+            // 隨機選取一個情境
             const random = scenarios[Math.floor(Math.random() * scenarios.length)];
-            
             selectedType = random.type;
 
+            // 切換介面
             document.getElementById('start-page').classList.add('hidden');
             document.getElementById('interview-page').classList.remove('hidden');
             
+            // 顯示提醒文字
             document.getElementById('interview-title').innerText = random.title;
-            document.getElementById('reminder-text').innerText = `⚠️請記住：您抽到的是「${selectedType}面試」，進入問卷後請選擇此項。`;
-            document.getElementById('interview-video').src = `https://www.youtube.com/embed/${random.videoId}?autoplay=1&rel=0`;
+            document.getElementById('reminder-text').innerText = `⚠️ 請記住：您抽到的是「${selectedType}」，進入問卷後請選擇相對應的區段。`;
+            
+            // 插入影片檔案
+            const container = document.getElementById('video-container');
+            container.innerHTML = `
+                <video id="interviewVideo" controls autoplay playsinline preload="auto">
+                    <source src="${random.url}" type="video/mp4">
+                    您的瀏覽器不支援 MP4 影片播放。
+                </video>
+            `;
         }
 
         function goToSurvey() {
-            // 請替換成你的 Google 表單網址
+            // 這裡是您提供的 Google 表單網址
             const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSc9gq7CecY1VdROUXS_h6kl3D2UsZwGQ-CaGyfsnDkB0HxH_A/viewform?usp=dialog";
             window.location.href = googleFormUrl;
         }
